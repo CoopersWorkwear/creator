@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 // Total number of preloaded JPEG frames in /public/frames (4-digit padded).
 // Regenerate the frames and update this value if you swap in real footage.
-const FRAME_COUNT = 72;
+const FRAME_COUNT = 160;
 
 // Prefixed so the frames resolve under a Pages project subpath (e.g. /creator)
 // as well as at the site root during local dev.
@@ -104,7 +104,7 @@ export default function ScrollHero() {
   };
 
   return (
-    <div ref={containerRef} style={{ height: "300vh", position: "relative" }}>
+    <div ref={containerRef} style={{ height: "600vh", position: "relative" }}>
       <div
         style={{
           position: "sticky",

@@ -35,9 +35,10 @@ app/
     SpecsSection.tsx         technical specs table
     ClosingCTA.tsx           closing call-to-action
 public/
-  frames/frame_0001.jpg …    72 preloaded hero frames (4-digit zero-padded)
+  frames/frame_0001.jpg …    160 preloaded hero frames (4-digit zero-padded)
 scripts/
   generate_frames.py         procedural placeholder-frame generator
+  higgsfield_generate.py     real-asset pipeline via the Higgsfield API
 ```
 
 The hero implementation honours the spec's non-negotiables: **no `<video>`
@@ -61,18 +62,42 @@ in `public/frames/` are **procedurally generated placeholders** (see
 explodes on a pure-black background. They demonstrate the scroll-scrub
 mechanic end-to-end and match the page's aesthetic.
 
-### To swap in real Higgsfield footage
+### Option A — swap in real Higgsfield footage manually
 
-1. Generate the three assets and the hero video in Higgsfield AI using the
-   prompts in the source brief; save it as `hero.mp4`.
+1. Generate the three assets and the hero video in Higgsfield AI (web app)
+   using the prompts in the source brief; save it as `hero.mp4`.
 2. Extract frames into `public/frames/` with the `ffmpeg` command above
    (and copy `hero.mp4` to `public/hero.mp4` if you want the raw file).
 3. Update `FRAME_COUNT` at the top of `app/components/ScrollHero.tsx` to match
    the number of extracted frames.
 
-To regenerate the placeholder frames instead:
+### Option B — automate it via the Higgsfield API
+
+`scripts/higgsfield_generate.py` runs the full pipeline (base image → exploded
+image → hero video → frame extraction). It calls the Higgsfield REST API, so it
+**must run in an environment whose network policy allows higgsfield.ai** (the
+default Claude Code web sandbox blocks it):
+
+```bash
+export HIGGSFIELD_API_KEY="sk-..."        # from your Higgsfield account
+pip install requests imageio imageio-ffmpeg pillow
+python3 scripts/higgsfield_generate.py
+# then set FRAME_COUNT in app/components/ScrollHero.tsx to the printed count
+```
+
+Endpoint paths / payload fields live in the `CONFIG` block at the top of the
+script — confirm them against your Higgsfield API dashboard if your version
+differs.
+
+### Regenerate the placeholder frames
 
 ```bash
 pip install pillow numpy
-python3 scripts/generate_frames.py
+python3 scripts/generate_frames.py    # FRAME_COUNT is set at the top
 ```
+
+## Page sections
+
+`app/page.tsx` composes, in scroll order: **ScrollHero** (600vh frame scrub) →
+**Features** → **Gallery** (three stills pulled from the hero sequence) →
+**Specs** → **Heritage** (story + stats) → **Closing CTA**.
