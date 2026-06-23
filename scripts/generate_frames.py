@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw
 # Output config -------------------------------------------------------------
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "public", "frames")
 W, H = 1920, 1080
-FRAME_COUNT = 72          # 3 seconds @ 24fps
+FRAME_COUNT = 160         # denser sampling → longer, smoother scroll scrub
 SS = 2                    # supersample factor for antialiasing
 
 # Everose gold palette ------------------------------------------------------
