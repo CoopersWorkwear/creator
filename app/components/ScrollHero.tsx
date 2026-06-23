@@ -7,8 +7,12 @@ import { motion } from "framer-motion";
 // Regenerate the frames and update this value if you swap in real footage.
 const FRAME_COUNT = 72;
 
+// Prefixed so the frames resolve under a Pages project subpath (e.g. /creator)
+// as well as at the site root during local dev.
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const framePath = (i: number) =>
-  `/frames/frame_${String(i + 1).padStart(4, "0")}.jpg`;
+  `${BASE_PATH}/frames/frame_${String(i + 1).padStart(4, "0")}.jpg`;
 
 export default function ScrollHero() {
   const containerRef = useRef<HTMLDivElement>(null);
