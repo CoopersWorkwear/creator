@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-// Real frames extracted from the uploaded Higgsfield "snake watch" clip.
-const FRAME_COUNT = 150;
+// Real frames from the uploaded Higgsfield "snake watch" clip, motion-
+// interpolated to 48fps for an ultra-smooth scrub.
+const FRAME_COUNT = 719;
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const framePath = (i: number) =>
