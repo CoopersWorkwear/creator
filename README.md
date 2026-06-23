@@ -89,6 +89,12 @@ Endpoint paths / payload fields live in the `CONFIG` block at the top of the
 script — confirm them against your Higgsfield API dashboard if your version
 differs.
 
+**Prefer the official CLI?** `scripts/higgsfield_cli.sh` does the same
+three-asset run via `@higgsfield/cli` (browser login, no API key). Install the
+CLI, run `higgsfield auth login`, fill in `IMAGE_MODEL` / `VIDEO_MODEL` (from
+`higgsfield model list`), then `bash scripts/higgsfield_cli.sh`. It leaves you
+with `public/hero.mp4` to hand off. Must run where higgsfield.ai is reachable.
+
 ### Regenerate the placeholder frames
 
 ```bash
