@@ -1,8 +1,8 @@
 name: Deploy to GitHub Pages
 
+# Runs on demand. Enable Pages first (Settings → Pages → Source: GitHub
+# Actions), then trigger this workflow to publish to GitHub Pages.
 on:
-  push:
-    branches: ["claude/website-creation-ghk42g"]
   workflow_dispatch:
 
 permissions:
