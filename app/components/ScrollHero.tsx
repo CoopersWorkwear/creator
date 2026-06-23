@@ -1,110 +1,42 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-// Total number of preloaded JPEG frames in /public/frames (4-digit padded).
-// Regenerate the frames and update this value if you swap in real footage.
-const FRAME_COUNT = 160;
-
-// Prefixed so the frames resolve under a Pages project subpath (e.g. /creator)
-// as well as at the site root during local dev.
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-const framePath = (i: number) =>
-  `${BASE_PATH}/frames/frame_${String(i + 1).padStart(4, "0")}.jpg`;
 
 export default function ScrollHero() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
+  // Drive every layer from a single scroll progress value (0 → 1) across the
+  // tall container, so the watch, the glow, and the copy move at different
+  // rates — the essence of the parallax.
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  // Watch image: slow zoom + a gentle rotation + slight rise. Because the photo
+  // sits on a pure-black field, any edge revealed by the rotation stays black.
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.06, 1.34]);
+  const imageRotate = useTransform(scrollYProgress, [0, 1], [-7, 4]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["2%", "-10%"]);
 
-    const images: HTMLImageElement[] = [];
-    let currentIdx = -1;
-    let rafId = 0;
+  // Glow breathes behind the watch at its own pace.
+  const glowScale = useTransform(scrollYProgress, [0, 1], [1, 1.5]);
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.5, 0.9, 0.4]);
 
-    // Cover-fit draw: scale the frame to fill the canvas, centred, black behind.
-    const draw = (index: number) => {
-      const img = images[index];
-      if (!img || !img.complete || img.naturalWidth === 0) return;
+  // Copy drifts down faster and fades out before the section ends.
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "55%"]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.55, 0.85], [1, 1, 0]);
 
-      const dpr = window.devicePixelRatio || 1;
-      const cw = canvas.width / dpr;
-      const ch = canvas.height / dpr;
-      const iw = img.naturalWidth;
-      const ih = img.naturalHeight;
-
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, cw, ch);
-
-      const scale = Math.max(cw / iw, ch / ih);
-      const dw = iw * scale;
-      const dh = ih * scale;
-      const dx = (cw - dw) / 2;
-      const dy = (ch - dh) / 2;
-      ctx.drawImage(img, dx, dy, dw, dh);
-
-      currentIdx = index;
-    };
-
-    const sizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    sizeCanvas();
-
-    // Preload every frame. Draw frame 0 as soon as the first image is ready.
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new Image();
-      img.src = framePath(i);
-      if (i === 0) {
-        img.onload = () => draw(0);
-      }
-      images[i] = img;
-    }
-
-    // rAF loop — no scroll listener. Derive progress from the container rect.
-    const tick = () => {
-      const top = container.getBoundingClientRect().top;
-      const scrollable = container.offsetHeight - window.innerHeight;
-      const progress = Math.max(0, Math.min(1, -top / scrollable));
-      const target = Math.round(progress * (FRAME_COUNT - 1));
-      if (target !== currentIdx) draw(target);
-      rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
-
-    const handleResize = () => {
-      sizeCanvas();
-      if (currentIdx >= 0) draw(currentIdx);
-    };
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const overlayItem = {
-    hidden: { opacity: 0, y: 20 },
+  const item = {
+    hidden: { opacity: 0, y: 24 },
     show: { opacity: 1, y: 0 },
   };
 
   return (
-    <div ref={containerRef} style={{ height: "600vh", position: "relative" }}>
+    <div ref={containerRef} style={{ height: "320vh", position: "relative", background: "#000" }}>
       <div
         style={{
           position: "sticky",
@@ -115,12 +47,55 @@ export default function ScrollHero() {
           background: "#000",
         }}
       >
-        <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: "100%" }} />
+        {/* Glow layer */}
+        <motion.div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: "-15%",
+            scale: glowScale,
+            opacity: glowOpacity,
+            background:
+              "radial-gradient(ellipse at 58% 42%, rgba(200,169,110,0.18) 0%, transparent 60%)",
+            pointerEvents: "none",
+          }}
+        />
 
+        {/* Watch image — the parallax centerpiece */}
+        <motion.img
+          src={`${BASE_PATH}/watch-everose.jpg`}
+          alt="The Day-Date 40 in Everose gold with a chocolate sunburst dial"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+            scale: imageScale,
+            rotate: imageRotate,
+            y: imageY,
+            willChange: "transform",
+          }}
+        />
+
+        {/* Legibility gradient */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0) 75%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Overlay copy */}
         <motion.div
           initial="hidden"
           animate="show"
-          transition={{ delayChildren: 0.8, staggerChildren: 0.18, ease: "easeOut" }}
+          transition={{ delayChildren: 0.6, staggerChildren: 0.18, ease: "easeOut" }}
           style={{
             position: "absolute",
             inset: 0,
@@ -129,12 +104,12 @@ export default function ScrollHero() {
             justifyContent: "flex-end",
             padding: "0 clamp(1.5rem, 6vw, 7rem) clamp(3rem, 10vh, 7rem)",
             pointerEvents: "none",
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.35) 50%, transparent 100%)",
+            y: textY,
+            opacity: textOpacity,
           }}
         >
           <motion.span
-            variants={overlayItem}
+            variants={item}
             transition={{ ease: "easeOut", duration: 0.8 }}
             style={{
               fontFamily: "var(--font-inter)",
@@ -149,7 +124,7 @@ export default function ScrollHero() {
           </motion.span>
 
           <motion.h1
-            variants={overlayItem}
+            variants={item}
             transition={{ ease: "easeOut", duration: 0.8 }}
             style={{
               fontFamily: "var(--font-playfair)",
@@ -163,7 +138,7 @@ export default function ScrollHero() {
           </motion.h1>
 
           <motion.p
-            variants={overlayItem}
+            variants={item}
             transition={{ ease: "easeOut", duration: 0.8 }}
             style={{
               fontFamily: "var(--font-inter)",
@@ -180,7 +155,7 @@ export default function ScrollHero() {
 
           <motion.a
             href="#features"
-            variants={overlayItem}
+            variants={item}
             transition={{ ease: "easeOut", duration: 0.8 }}
             whileHover={{ backgroundColor: "#E8C98E" }}
             style={{

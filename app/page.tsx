@@ -1,5 +1,4 @@
 import ScrollHero from "./components/ScrollHero";
-import ShowcaseSection from "./components/ShowcaseSection";
 import FeaturesSection from "./components/FeaturesSection";
 import GallerySection from "./components/GallerySection";
 import SpecsSection from "./components/SpecsSection";
@@ -10,7 +9,6 @@ export default function Home() {
   return (
     <main style={{ background: "#000" }}>
       <ScrollHero />
-      <ShowcaseSection />
       <FeaturesSection />
       <GallerySection />
       <SpecsSection />

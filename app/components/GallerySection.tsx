@@ -4,24 +4,28 @@ import { motion } from "framer-motion";
 
 const ACCENT = "#C8A96E";
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const IMG = `${BASE_PATH}/watch-everose.jpg`;
 
-// Reuse three moments from the hero sequence as gallery stills:
-// fully assembled, mid-deconstruction, and the final exploded view.
-const plates: { src: string; label: string; caption: string }[] = [
+// Three macro crops of the same real photograph, framed via background-size /
+// background-position to spotlight different details of the watch.
+const plates: { label: string; caption: string; size: string; position: string }[] = [
   {
-    src: `${BASE_PATH}/frames/frame_0001.jpg`,
-    label: "The Whole",
-    caption: "Assembled to a tolerance measured in microns.",
+    label: "The Dial",
+    caption: "A chocolate sunburst face, sub-dials turned in concentric guilloché.",
+    size: "230%",
+    position: "62% 42%",
   },
   {
-    src: `${BASE_PATH}/frames/frame_0096.jpg`,
-    label: "The Reveal",
-    caption: "Mid-motion, the case yields its inner architecture.",
+    label: "The Bezel",
+    caption: "Each flute cut and polished by hand to catch and throw the light.",
+    size: "180%",
+    position: "40% 60%",
   },
   {
-    src: `${BASE_PATH}/frames/frame_0160.jpg`,
-    label: "The Sum of Parts",
-    caption: "Every component, suspended in deliberate symmetry.",
+    label: "The Bracelet",
+    caption: "Three-piece President links flowing seamlessly from the case.",
+    size: "200%",
+    position: "12% 78%",
   },
 ];
 
@@ -79,7 +83,7 @@ export default function GallerySection() {
             lineHeight: 1.1,
           }}
         >
-          Seen from every angle.
+          Closer than the eye can hold.
         </motion.h2>
 
         <div
@@ -90,34 +94,20 @@ export default function GallerySection() {
           }}
         >
           {plates.map((p) => (
-            <motion.figure
-              key={p.label}
-              variants={item}
-              style={{ margin: 0 }}
-            >
+            <motion.figure key={p.label} variants={item} style={{ margin: 0 }}>
               <div
+                role="img"
+                aria-label={`${p.label} detail of the Everose Day-Date 40`}
                 style={{
-                  position: "relative",
                   aspectRatio: "4 / 5",
-                  overflow: "hidden",
-                  background: "#000",
+                  backgroundImage: `url(${IMG})`,
+                  backgroundSize: p.size,
+                  backgroundPosition: p.position,
+                  backgroundRepeat: "no-repeat",
+                  backgroundColor: "#000",
                   border: "1px solid rgba(200,169,110,0.2)",
                 }}
-              >
-                {/* Plain <img> — these are pre-rendered static frames. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.src}
-                  alt={p.label}
-                  loading="lazy"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-              </div>
+              />
               <figcaption style={{ marginTop: "1.1rem" }}>
                 <span
                   style={{
