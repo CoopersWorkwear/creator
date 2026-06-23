@@ -74,20 +74,35 @@ mechanic end-to-end and match the page's aesthetic.
 ### Option B — automate it via the Higgsfield API
 
 `scripts/higgsfield_generate.py` runs the full pipeline (base image → exploded
-image → hero video → frame extraction). It calls the Higgsfield REST API, so it
-**must run in an environment whose network policy allows higgsfield.ai** (the
-default Claude Code web sandbox blocks it):
+image → hero video → frame extraction). It targets Higgsfield's **v2 REST API**
+(`platform.higgsfield.ai`), with the wire contract mirrored from the official
+`@higgsfield/client` SDK — auth header `Authorization: Key <KEY_ID:KEY_SECRET>`,
+flat JSON bodies to `POST /v1/text2image/soul` and `POST /v1/image2video/dop`,
+and polling at `GET /requests/{request_id}/status`.
+
+**Network egress.** Two hosts must be in the environment's egress allowlist (the
+default Claude Code web sandbox blocks both):
+
+1. `platform.higgsfield.ai` — the API (create + poll)
+2. the **asset CDN host** the result URLs use — Higgsfield serves finished media
+   from a separate storage/CDN host, so *downloading* the assets needs that host
+   allowlisted too. The script prints the host; add it and re-run.
 
 ```bash
-export HIGGSFIELD_API_KEY="sk-..."        # from your Higgsfield account
-pip install requests imageio imageio-ffmpeg pillow
-python3 scripts/higgsfield_generate.py
+# Credentials — your Higgsfield key is a KEY_ID:KEY_SECRET pair:
+export HIGGSFIELD_API_KEY="KEY_ID:KEY_SECRET"
+# (or: export HIGGSFIELD_API_KEY=KEY_ID; export HIGGSFIELD_API_SECRET=KEY_SECRET)
+
+pip install requests pillow imageio imageio-ffmpeg
+
+python3 scripts/higgsfield_generate.py --dry-run   # validate requests, no network
+python3 scripts/higgsfield_generate.py             # real run (spends credits)
 # then set FRAME_COUNT in app/components/ScrollHero.tsx to the printed count
 ```
 
-Endpoint paths / payload fields live in the `CONFIG` block at the top of the
-script — confirm them against your Higgsfield API dashboard if your version
-differs.
+Generation parameters (image size, quality, DoP video model) live in the
+`CONFIG` block at the top of the script. `--dry-run` prints every request that
+would be sent so you can confirm the payloads before spending any credits.
 
 **Prefer the official CLI?** `scripts/higgsfield_cli.sh` does the same
 three-asset run via `@higgsfield/cli` (browser login, no API key). Install the
