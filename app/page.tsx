@@ -1,19 +1,23 @@
-import ScrollHero from "./components/ScrollHero";
-import FeaturesSection from "./components/FeaturesSection";
-import GallerySection from "./components/GallerySection";
-import SpecsSection from "./components/SpecsSection";
-import HeritageSection from "./components/HeritageSection";
-import ClosingCTA from "./components/ClosingCTA";
+import SiteHeader from "./components/SiteHeader";
+import Hero from "./components/Hero";
+import ServicesSection from "./components/ServicesSection";
+import AboutSection from "./components/AboutSection";
+import WhyUsSection from "./components/WhyUsSection";
+import ContactSection from "./components/ContactSection";
+import SiteFooter from "./components/SiteFooter";
 
 export default function Home() {
   return (
-    <main style={{ background: "#000" }}>
-      <ScrollHero />
-      <FeaturesSection />
-      <GallerySection />
-      <SpecsSection />
-      <HeritageSection />
-      <ClosingCTA />
-    </main>
+    <>
+      <SiteHeader />
+      <main>
+        <Hero />
+        <ServicesSection />
+        <AboutSection />
+        <WhyUsSection />
+        <ContactSection />
+      </main>
+      <SiteFooter />
+    </>
   );
 }
