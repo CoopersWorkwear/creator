@@ -1,12 +1,11 @@
-# Day-Date 40 — Scroll-Driven Hero
+# Berwick Mechanical Services
 
-A scroll-driven luxury-watch product landing page built with **Next.js 15**,
-**React 19**, **TypeScript**, and **Framer Motion**, following the 8-step
-"Build Animated Websites Using Claude Code" workflow.
+Marketing website for **Berwick Mechanical Services** — a VicRoads accredited
+local mechanic workshop on Enterprise Avenue, Berwick VIC, serving the City of
+Casey since 2003.
 
-As you scroll the hero, a `<canvas>` scrubs through preloaded JPEG frames —
-the watch orbits and then mechanically deconstructs into an exploded view —
-followed by scroll-triggered Features, Specs, and Closing CTA sections.
+Built with **Next.js 15**, **React 19**, **TypeScript**, and **Framer Motion**
+as a single-page, fully responsive, statically-exportable site.
 
 ## Running locally
 
@@ -15,95 +14,46 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
-Then confirm:
+## Building
 
-- `http://localhost:3000` loads
-- `/frames/frame_0001.jpg` returns `200`
-- Scrolling the hero scrubs the watch from assembled to fully deconstructed
-- Features, Specs, and CTA animate in on scroll
+```bash
+npm run build            # standard Next.js build
+GITHUB_PAGES=true npm run build   # static export to ./out (used by Pages CI)
+```
 
 ## Project structure
 
 ```
 app/
-  layout.tsx                 Inter + Playfair Display fonts, metadata
-  globals.css                reset + black canvas
-  page.tsx                   composes the four sections
+  layout.tsx                 Oswald + Inter fonts, SEO metadata, AutoRepair JSON-LD
+  globals.css                design tokens (brand palette), base styles, utilities
+  page.tsx                   composes the page sections
+  lib/
+    business.ts              single source of truth for all business details
   components/
-    ScrollHero.tsx           canvas frame-scrub hero (rAF, no scroll listener)
-    FeaturesSection.tsx      6 feature cards, useInView fade-ins
-    SpecsSection.tsx         technical specs table
-    ClosingCTA.tsx           closing call-to-action
-public/
-  frames/frame_0001.jpg …    160 preloaded hero frames (4-digit zero-padded)
-scripts/
-  generate_frames.py         procedural placeholder-frame generator
-  higgsfield_generate.py     real-asset pipeline via the Higgsfield API
+    SiteHeader.tsx           sticky header with desktop + mobile nav and call CTA
+    Hero.tsx                 headline, trust badges, call-to-action, stat strip
+    ServicesSection.tsx      eight core services with SVG icons
+    AboutSection.tsx         "since 2003" story + stat panel
+    WhyUsSection.tsx         accreditation / trust reasons
+    ContactSection.tsx       phone, mobile, email, address, hours, embedded map
+    SiteFooter.tsx           CTA band, sitemap, contact, service-area footer
 ```
 
-The hero implementation honours the spec's non-negotiables: **no `<video>`
-element** (canvas + JPEG frames only), **no scroll event listener** (a
-`requestAnimationFrame` loop reading `getBoundingClientRect()`),
-device-pixel-ratio scaling, cover-fit drawing, and a single fixed design-token
-palette built around Everose gold `#C8A96E` on pure black `#000000`.
+## Editing business details
 
-## ⚠️ About the hero frames (Steps 1–2)
+All contact details, hours, address, accreditations and navigation live in
+`app/lib/business.ts`. Update them there and they propagate across the whole
+site (header, hero, contact, footer, metadata and structured data).
 
-The original workflow generates the hero footage in **Higgsfield AI** — an
-external, paid generative-video tool — and extracts frames with `ffmpeg`:
+## Services covered
 
-```bash
-ffmpeg -i hero.mp4 -vf "fps=24,scale=1920:-1" -q:v 3 "public/frames/frame_%04d.jpg"
-```
+Log book servicing · Roadworthy certificates (RWC) · Brakes & clutches ·
+Suspension & steering · Batteries & exhausts · Pre-purchase inspections ·
+General repairs · All makes & models including 4WDs and vintage vehicles.
 
-Higgsfield AI is **not available in this environment**, so the committed frames
-in `public/frames/` are **procedurally generated placeholders** (see
-`scripts/generate_frames.py`) — an Everose-gold watch that orbits and then
-explodes on a pure-black background. They demonstrate the scroll-scrub
-mechanic end-to-end and match the page's aesthetic.
+## Deployment
 
-### Option A — swap in real Higgsfield footage manually
-
-1. Generate the three assets and the hero video in Higgsfield AI (web app)
-   using the prompts in the source brief; save it as `hero.mp4`.
-2. Extract frames into `public/frames/` with the `ffmpeg` command above
-   (and copy `hero.mp4` to `public/hero.mp4` if you want the raw file).
-3. Update `FRAME_COUNT` at the top of `app/components/ScrollHero.tsx` to match
-   the number of extracted frames.
-
-### Option B — automate it via the Higgsfield API
-
-`scripts/higgsfield_generate.py` runs the full pipeline (base image → exploded
-image → hero video → frame extraction). It calls the Higgsfield REST API, so it
-**must run in an environment whose network policy allows higgsfield.ai** (the
-default Claude Code web sandbox blocks it):
-
-```bash
-export HIGGSFIELD_API_KEY="sk-..."        # from your Higgsfield account
-pip install requests imageio imageio-ffmpeg pillow
-python3 scripts/higgsfield_generate.py
-# then set FRAME_COUNT in app/components/ScrollHero.tsx to the printed count
-```
-
-Endpoint paths / payload fields live in the `CONFIG` block at the top of the
-script — confirm them against your Higgsfield API dashboard if your version
-differs.
-
-**Prefer the official CLI?** `scripts/higgsfield_cli.sh` does the same
-three-asset run via `@higgsfield/cli` (browser login, no API key). Install the
-CLI, run `higgsfield auth login`, fill in `IMAGE_MODEL` / `VIDEO_MODEL` (from
-`higgsfield model list`), then `bash scripts/higgsfield_cli.sh`. It leaves you
-with `public/hero.mp4` to hand off. Must run where higgsfield.ai is reachable.
-
-### Regenerate the placeholder frames
-
-```bash
-pip install pillow numpy
-python3 scripts/generate_frames.py    # FRAME_COUNT is set at the top
-```
-
-## Page sections
-
-`app/page.tsx` composes, in scroll order: **ScrollHero** (600vh frame scrub) →
-**Features** → **Gallery** (three stills pulled from the hero sequence) →
-**Specs** → **Heritage** (story + stats) → **Closing CTA**.
+`.github/workflows/ci.yml` builds on every push. `.github/workflows/pages.yml`
+publishes a static export to GitHub Pages on demand (`workflow_dispatch`). The
+site uses no server-side features, so it deploys cleanly to any static host.
