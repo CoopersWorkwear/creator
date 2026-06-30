@@ -35,7 +35,7 @@ export default function Hero() {
         color: "#fff",
         overflow: "hidden",
         background:
-          "radial-gradient(1100px 700px at 78% -5%, #1d3354 0%, rgba(29,51,84,0) 60%), linear-gradient(160deg, #0c1320 0%, #111c30 55%, #0c1320 100%)",
+          "radial-gradient(1100px 700px at 78% -5%, #262b33 0%, rgba(38,43,51,0) 60%), linear-gradient(160deg, #0a0b0d 0%, #15171b 55%, #0a0b0d 100%)",
       }}
     >
       {/* Decorative grid / blueprint lines */}
@@ -63,7 +63,7 @@ export default function Hero() {
           right: "-6%",
           top: "12%",
           background:
-            "radial-gradient(circle, rgba(226,59,59,0.25) 0%, rgba(226,59,59,0) 70%)",
+            "radial-gradient(circle, rgba(170,180,196,0.22) 0%, rgba(170,180,196,0) 70%)",
           filter: "blur(10px)",
         }}
       />
@@ -96,7 +96,7 @@ export default function Hero() {
           >
             Honest mechanics.
             <br />
-            <span style={{ color: "var(--accent)" }}>Done properly</span>, every time.
+            <span className="metal-text">Done properly</span>, every time.
           </motion.h1>
 
           <motion.p
@@ -229,7 +229,7 @@ function PhoneIcon() {
 
 function CheckIcon() {
   return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--metal)" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M20 6 9 17l-5-5" />
     </svg>
   );

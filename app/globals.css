@@ -1,16 +1,21 @@
 :root {
-  /* Brand palette — industrial navy + signature red */
-  --ink: #0c1320;
-  --navy: #111c30;
-  --navy-soft: #18243a;
-  --steel: #233247;
-  --accent: #e23b3b;
-  --accent-dark: #c22a2a;
-  --paper: #f5f7fa;
-  --paper-soft: #eef1f6;
-  --text: #1a2433;
-  --muted: #5c6878;
-  --line: rgba(20, 32, 51, 0.1);
+  /* Brand palette — black + brushed silver / chrome (matches the logo) */
+  --ink: #0a0b0d;
+  --navy: #121418;
+  --navy-soft: #181b20;
+  --steel: #23262c;
+  --accent: #3c424a;        /* graphite — primary accent on light surfaces */
+  --accent-dark: #23262c;
+  --accent-tint: rgba(60, 66, 74, 0.09);
+  --metal: #c7ccd2;         /* silver — accent on dark surfaces */
+  --metal-dark: #9aa0a8;
+  --metal-soft: rgba(199, 204, 210, 0.14);
+  --steel-text: #7d8590;    /* mid steel — readable on both light and dark */
+  --paper: #f4f5f7;
+  --paper-soft: #eceef1;
+  --text: #16181c;
+  --muted: #5c636d;
+  --line: rgba(20, 24, 30, 0.1);
   --line-dark: rgba(255, 255, 255, 0.1);
 
   --maxw: 1180px;
@@ -69,6 +74,21 @@ img {
   padding-inline: var(--pad);
 }
 
+/* Brushed-chrome text (matches the logo lettering) */
+.metal-text {
+  background: linear-gradient(
+    180deg,
+    #f6f8fa 0%,
+    #d4d9de 42%,
+    #9aa0a8 52%,
+    #c2c7cd 60%,
+    #eef1f4 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -78,14 +98,14 @@ img {
   font-size: 0.72rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--steel-text);
 }
 
 .eyebrow::before {
   content: "";
   width: 26px;
   height: 2px;
-  background: var(--accent);
+  background: var(--steel-text);
   display: inline-block;
 }
 
@@ -109,14 +129,17 @@ img {
   white-space: nowrap;
 }
 
+/* Primary = brushed graphite with a silver hairline */
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 10px 30px -12px rgba(226, 59, 59, 0.7);
+  background: linear-gradient(180deg, #2f343b 0%, #16181c 100%);
+  color: #eef1f4;
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 30px -16px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .btn-primary:hover {
-  background: var(--accent-dark);
+  background: linear-gradient(180deg, #3a4047 0%, #1d2024 100%);
   transform: translateY(-2px);
 }
 
@@ -132,13 +155,15 @@ img {
   transform: translateY(-2px);
 }
 
+/* Secondary light button (e.g. on white cards next to the dark primary) */
 .btn-dark {
-  background: var(--ink);
-  color: #fff;
+  background: #fff;
+  color: var(--text);
+  border-color: var(--line);
 }
 
 .btn-dark:hover {
-  background: var(--navy);
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
@@ -205,7 +230,7 @@ img {
   bottom: -6px;
   width: 0;
   height: 2px;
-  background: var(--accent);
+  background: var(--metal);
   transition: width 0.2s ease;
 }
 
@@ -215,6 +240,67 @@ img {
 
 .nav-link:hover::after {
   width: 100%;
+}
+
+/* Continuous sliding brand marquee */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 7%,
+    #000 93%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 7%,
+    #000 93%,
+    transparent 100%
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: marquee-scroll 36s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-item {
+  flex: none;
+  font-family: var(--font-head);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+  color: var(--metal-dark);
+  white-space: nowrap;
+  padding-inline: clamp(1.1rem, 3vw, 2.4rem);
+  transition: color 0.2s ease;
+}
+
+.marquee-item:hover {
+  color: var(--text);
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    transform: none;
+  }
 }
 
 @media (max-width: 860px) {

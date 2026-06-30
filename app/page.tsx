@@ -1,5 +1,6 @@
 import SiteHeader from "./components/SiteHeader";
 import Hero from "./components/Hero";
+import BrandsMarquee from "./components/BrandsMarquee";
 import ServicesSection from "./components/ServicesSection";
 import AboutSection from "./components/AboutSection";
 import WhyUsSection from "./components/WhyUsSection";
@@ -12,6 +13,7 @@ export default function Home() {
       <SiteHeader />
       <main>
         <Hero />
+        <BrandsMarquee />
         <ServicesSection />
         <AboutSection />
         <WhyUsSection />
