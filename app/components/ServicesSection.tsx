@@ -164,7 +164,7 @@ export default function ServicesSection() {
                   width: 56,
                   height: 56,
                   borderRadius: 12,
-                  background: "rgba(226,59,59,0.1)",
+                  background: "var(--accent-tint)",
                   color: "var(--accent)",
                   marginBottom: "1.3rem",
                 }}

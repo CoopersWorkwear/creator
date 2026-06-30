@@ -5,7 +5,7 @@ export default function SiteFooter() {
   return (
     <footer style={{ background: "#080d16", color: "rgba(255,255,255,0.7)" }}>
       {/* CTA band */}
-      <div style={{ background: "var(--accent)" }}>
+      <div style={{ background: "linear-gradient(135deg, #2a2e35 0%, #14161a 100%)", borderBottom: "1px solid var(--line-dark)" }}>
         <div
           className="container"
           style={{
@@ -36,7 +36,7 @@ export default function SiteFooter() {
           <a
             href={business.phoneHref}
             className="btn"
-            style={{ background: "#fff", color: "var(--accent-dark)" }}
+            style={{ background: "#fff", color: "var(--text)" }}
           >
             Call {business.phone}
           </a>

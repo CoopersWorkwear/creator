@@ -2,24 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { business, navLinks } from "../lib/business";
-
-function Wrench({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M14.7 6.3a4 4 0 0 0-5.2 5.2L3 18l3 3 6.5-6.5a4 4 0 0 0 5.2-5.2l-2.4 2.4-2.6-.7-.7-2.6 2.4-2.4z" />
-    </svg>
-  );
-}
+import Logo from "./Logo";
 
 export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -40,7 +23,7 @@ export default function SiteHeader() {
         left: 0,
         right: 0,
         zIndex: 50,
-        background: scrolled ? "rgba(12,19,32,0.95)" : "rgba(12,19,32,0.6)",
+        background: scrolled ? "rgba(10,11,13,0.95)" : "rgba(10,11,13,0.55)",
         backdropFilter: "blur(10px)",
         borderBottom: scrolled
           ? "1px solid var(--line-dark)"
@@ -58,54 +41,7 @@ export default function SiteHeader() {
         }}
       >
         {/* Logo */}
-        <a
-          href="#top"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.7rem",
-            color: "#fff",
-          }}
-        >
-          <span
-            style={{
-              display: "grid",
-              placeItems: "center",
-              width: 40,
-              height: 40,
-              borderRadius: 9,
-              background: "var(--accent)",
-              color: "#fff",
-            }}
-          >
-            <Wrench />
-          </span>
-          <span style={{ lineHeight: 1 }}>
-            <span
-              style={{
-                display: "block",
-                fontFamily: "var(--font-head)",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.03em",
-                fontSize: "1.05rem",
-              }}
-            >
-              Berwick Mechanical
-            </span>
-            <span
-              style={{
-                display: "block",
-                fontSize: "0.62rem",
-                letterSpacing: "0.32em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.55)",
-              }}
-            >
-              Services · Est. {business.established}
-            </span>
-          </span>
-        </a>
+        <Logo scale={0.95} />
 
         {/* Desktop nav */}
         <nav

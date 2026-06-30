@@ -104,11 +104,11 @@ export default function AboutSection() {
               }}
             >
               <div
+                className="metal-text"
                 style={{
                   fontFamily: "var(--font-head)",
                   fontWeight: 700,
                   fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
-                  color: "var(--accent)",
                   lineHeight: 1,
                 }}
               >

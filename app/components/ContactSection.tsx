@@ -24,7 +24,7 @@ function Row({ icon, label, children }: { icon: ReactNode; label: string; childr
           width: 44,
           height: 44,
           borderRadius: 10,
-          background: "rgba(226,59,59,0.1)",
+          background: "var(--accent-tint)",
           color: "var(--accent)",
         }}
       >
